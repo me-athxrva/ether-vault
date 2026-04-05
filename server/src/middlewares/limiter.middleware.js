@@ -8,4 +8,15 @@ const authLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-module.exports = authLimiter;
+const docLimiter = rateLimit({
+  windowMs: 1000 * 60,
+  max: 30,
+  message: "Too many attempts, try again later",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+module.exports = {
+  authLimiter,
+  docLimiter,
+};
