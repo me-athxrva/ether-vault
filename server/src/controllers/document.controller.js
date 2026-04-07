@@ -1,9 +1,6 @@
 const generateFileHash = require("../utils/hash");
 const Document = require("../models/document.model");
-const {
-  storeHashOnChain,
-  verifyHashOnChain,
-} = require("../services/chain.service");
+const { storeHashOnChain } = require("../services/chain.service");
 const { uploadToIPFS } = require("../services/ipfs.service");
 
 async function uploadDocumentController(req, res) {
