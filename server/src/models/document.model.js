@@ -17,6 +17,13 @@ const documentSchema = new mongoose.Schema(
     hash: {
       type: String,
       required: true,
+      unique: true,
+    },
+
+    verifyId: {
+      type: String,
+      required: true,
+      unique: true,
     },
 
     cid: {
@@ -24,9 +31,10 @@ const documentSchema = new mongoose.Schema(
       required: true,
     },
 
-    fileUrl: {
+    txHash: {
       type: String,
       required: true,
+      unique: true,
     },
 
     isRevoked: {
@@ -38,8 +46,6 @@ const documentSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
-documentSchema.index({ hash: 1 });
 
 const Document = mongoose.model("Document", documentSchema);
 

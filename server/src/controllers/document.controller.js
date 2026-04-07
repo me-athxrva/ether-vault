@@ -1,5 +1,9 @@
-const { generateFileHash } = require("../utils/hash");
+const generateFileHash = require("../utils/hash");
 const Document = require("../models/document.model");
+const {
+  storeHashOnChain,
+  verifyHashOnChain,
+} = require("../services/chain.service");
 const { uploadToIPFS } = require("../services/ipfs.service");
 
 async function uploadDocumentController(req, res) {
@@ -11,60 +15,49 @@ async function uploadDocumentController(req, res) {
       });
     }
 
-    // generate hash
+    // generating hash
     const hash = generateFileHash(req.file.buffer);
+    const verifyId = "DOC-" + hash.substring(0, 12).toUpperCase();
 
-    // check for duplicate document using hash
-    try {
-      const existingDocument = await Document.findOne({ hash });
-
-      if (existingDocument) {
-        return res.status(409).json({
-          message: "Document already exists",
-          status: "failed",
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: "Internal server error",
+    // DB duplicate check
+    const existingDocument = await Document.findOne({ hash });
+    if (existingDocument) {
+      return res.status(409).json({
+        message: "Document already exists",
         status: "failed",
       });
     }
 
-    // upload to IPFS
+    // IPFS upload
     const cid = await uploadToIPFS(req.file);
 
-    try {
-      // create new document record in DB
-      const document = await Document.create({
-        title: req.body.title || req.file.originalname,
-        owner: req.user.userId,
-        hash,
-        cid,
-        fileUrl: `https://gateway.pinata.cloud/ipfs/${cid}`,
-      });
-    } catch (err) {
-      console.log(err);
-      return res.status(500).json({
-        message: "Internal server error",
-        status: "failed",
-      });
-    }
+    // storing on blockchain
+    const txHash = await storeHashOnChain(hash);
 
-    return res.status(200).json({
+    // db record save
+    const document = await Document.create({
+      title: req.body.title || req.file.originalname,
+      owner: req.user.userId,
+      hash,
+      cid,
+      verifyId,
+      txHash,
+      fileUrl: `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${cid}`,
+    });
+
+    return res.status(201).json({
       message: "File uploaded successfully",
-      // data: {
-      //   hash,
-      //   cid,
-      // },
+      data: {
+        verifyId: document.verifyId,
+        txHash: document.txHash,
+      },
       status: "success",
     });
   } catch (err) {
     console.error(err);
 
     return res.status(500).json({
-      message: "Internal server error",
+      message: "Upload failed",
       status: "failed",
     });
   }

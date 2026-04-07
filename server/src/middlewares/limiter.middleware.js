@@ -10,7 +10,7 @@ const authLimiter = rateLimit({
 
 const docLimiter = rateLimit({
   windowMs: 1000 * 60,
-  max: 30,
+  max: 3,
   message: "Too many attempts, try again later",
   standardHeaders: true,
   legacyHeaders: false,
