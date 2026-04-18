@@ -55,7 +55,7 @@ const AsciiAnim = () => {
 
         <div className="flex justify-between gap-4 mt-2">
           <span>CURRENT_BLOCK:</span>
-          <span className="text-[#d4d4d4]">#{blockHeight.toLocaleString()}</span>
+          <span className="text-[#d4d4d4]">#{blockHeight.toLocaleString("en-US")}</span>
         </div>
 
         <div className="flex justify-between gap-4">
@@ -95,8 +95,7 @@ export default function Footer() {
   return (
     <footer ref={footerRef} className="relative z-50 -mt-10 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] mx-auto flex h-[60vh] w-full flex-col justify-end px-6 pb-10 lg:px-10 rounded-t-[4rem] overflow-hidden">
       <div className="pointer-events-none absolute inset-0">
-
-        <div className="absolute left-0 top-0 h-full w-full bg-surface-lowest/35 blur-[160px]" />
+        <div className="absolute left-0 top-0 h-full w-full bg-surface-lowest blur-[160px]" />
         <div
           className="absolute inset-0 bg-repeat mix-blend-lighten opacity-[0.035]"
           style={{
@@ -108,7 +107,7 @@ export default function Footer() {
       <div className="relative z-10 flex h-full w-full flex-col justify-between pt-16">
 
         <div className="flex w-full grow">
-          <div className="flex w-[70%] pr-10 pt-10">
+          <div className="flex w-[70%] items-center pr-10">
             <div className="grid w-full grid-cols-3 gap-8">
               <div>
                 <h4 className="font-(family-name:--font-display) text-sm font-bold tracking-widest text-[#d4d4d4] uppercase mb-6">Project</h4>

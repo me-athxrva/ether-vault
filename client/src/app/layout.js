@@ -14,6 +14,7 @@ const inter = Inter({
 });
 
 import SmoothScroll from "@/components/SmoothScroll";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata = {
   title: "EtherVault",
@@ -24,10 +25,13 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${spaceGrotesk.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <SmoothScroll>{children}</SmoothScroll>
+        <TooltipProvider>
+          <SmoothScroll>{children}</SmoothScroll>
+        </TooltipProvider>
       </body>
     </html>
   );

@@ -60,7 +60,6 @@
 }
 
 :root {
-  /* === Stealth Aesthetic Palette === */
   --background: #000000;
   --foreground: #e8e8e8;
 
@@ -70,30 +69,25 @@
   --popover: #1c1b1b;
   --popover-foreground: #e8e8e8;
 
-  /* PRIMARY — white-on-dark, "metallic" CTA */
   --primary: #ffffff;
   --primary-foreground: #1a1c1c;
 
-  /* SECONDARY */
   --secondary: #353534;
   --secondary-foreground: #e8e8e8;
 
-  /* MUTED */
   --muted: #2a2a2a;
   --muted-foreground: #8a8a8a;
 
-  /* ACCENT */
   --accent: #d4d4d4;
   --accent-foreground: #1a1c1c;
 
   --destructive: oklch(0.65 0.25 25);
 
-  /* Ghost borders — subtle, low opacity */
   --border: rgba(71, 71, 71, 0.15);
   --input: rgba(71, 71, 71, 0.15);
   --ring: #d4d4d4;
 
-  --radius: 9999px; /* ROUND_FULL per DESIGN.md */
+  --radius: 0.5rem; 
 }
 
 @layer base {
@@ -120,7 +114,7 @@
   box-shadow: 0 0 60px rgba(232, 232, 232, 0.06);
 }
 
-/* === Card hover (kept as CSS for instant feel) === */
+/* Card hover */
 .card-hover {
   transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
               box-shadow 0.4s ease;
