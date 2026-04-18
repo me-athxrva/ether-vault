@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
 const authRouter = require("./routes/auth.routes");
@@ -11,6 +12,13 @@ app.use(express.json());
 
 // cookie parsing
 app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  }),
+);
 
 // routes
 app.use("/api/auth", authRouter);

@@ -80,7 +80,7 @@ async function userLoginController(req, res) {
   }
 
   try {
-    const user = await userModel.findOne({ email }).select("+password");
+    const user = await userModel.findOne({ email }).select("+password +role");
 
     if (!user) {
       return res.status(401).json({
@@ -97,7 +97,7 @@ async function userLoginController(req, res) {
         status: "failed",
       });
     }
-
+    
     const token = jwt.sign(
       {
         userId: user._id,
@@ -169,19 +169,20 @@ async function adminLoginController(req, res) {
       });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000);
-
-    await redis.set(`otp:${user._id}`, otp, {
-      ex: 300,
-    });
-
-    const existingOtp = await redis.get(`otp:${user._id}:cooldown`);
-    if (existingOtp) {
+    
+    const existingCooldown = await redis.get(`otp:${user._id}:cooldown`);
+    if (existingCooldown) {
       return res.status(429).json({
         message: "OTP already sent. Try again later.",
         status: "failed",
       });
     }
+
+    const otp = Math.floor(100000 + Math.random() * 900000);
+
+    await redis.set(`otp:${user._id}`, otp, {
+      ex: 300,
+    });
 
     await redis.set(`otp:${user._id}:cooldown`, "1", {
       ex: 60,
@@ -191,6 +192,7 @@ async function adminLoginController(req, res) {
 
     return res.status(200).json({
       message: `OTP sent to ${user._id}`,
+      token: user._id,
       status: "success",
     });
   } catch (err) {
@@ -204,11 +206,11 @@ async function adminLoginController(req, res) {
 }
 
 async function verifyOtpController(req, res) {
-  const { userId, otp } = req.body || {};
+  const { token, otp } = req.body || {};
 
-  if (!userId || !otp) {
+  if (!token || !otp) {
     const missingFields = [];
-    if (!userId) missingFields.push("userId");
+    if (!token) missingFields.push("token");
     if (!otp) missingFields.push("otp");
 
     return res.status(400).json({
@@ -218,7 +220,7 @@ async function verifyOtpController(req, res) {
   }
 
   try {
-    const storedOtp = await redis.get(`otp:${userId}`);
+    const storedOtp = await redis.get(`otp:${token}`);
 
     if (!storedOtp) {
       return res.status(400).json({
@@ -234,10 +236,10 @@ async function verifyOtpController(req, res) {
       });
     }
 
-    await redis.del(`otp:${userId}`);
-    await redis.del(`otp:${userId}:cooldown`);
+    await redis.del(`otp:${token}`);
+    await redis.del(`otp:${token}:cooldown`);
 
-    const user = await userModel.findById(userId).select("+role");
+    const user = await userModel.findById(token).select("+role");
 
     if (!user) {
       return res.status(404).json({
@@ -253,7 +255,7 @@ async function verifyOtpController(req, res) {
       });
     }
 
-    const token = jwt.sign(
+    const jwt_token = jwt.sign(
       {
         userId: user._id,
         role: user.role,
@@ -264,10 +266,10 @@ async function verifyOtpController(req, res) {
       },
     );
 
-    res.cookie("token", token, {
+    res.cookie("token", jwt_token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: false, //change to true with hosting
+      sameSite: "lax", //"none" with hosting i.e. https
     });
 
     return res.status(200).json({
