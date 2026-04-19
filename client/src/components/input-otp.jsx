@@ -27,6 +27,7 @@ export function InputOTPForm() {
 
     async function onVerify(event) {
         event.preventDefault();
+        setIsLoading(true);
         try {
             const token = sessionStorage.getItem("loginToken");
 

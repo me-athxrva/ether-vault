@@ -17,7 +17,7 @@ const AsciiAnim = () => {
     const chars = "0123456789ABCDEF";
     const interval = setInterval(() => {
       if (Math.random() > 0.6) {
-        setPing(Math.floor(Math.random() * 8) + 10); 
+        setPing(Math.floor(Math.random() * 8) + 10);
       }
       if (Math.random() > 0.8) {
         let hash = "0x";

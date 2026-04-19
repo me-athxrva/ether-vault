@@ -4,7 +4,6 @@ export function middleware(req) {
   const token = req.cookies.get("token")?.value;
   const { pathname } = req.nextUrl;
 
-  // 🔒 Not logged in → block dashboards
   if (!token) {
     if (pathname.startsWith("/issuer/dashboard")) {
       return NextResponse.redirect(new URL("/issuer/login", req.url));

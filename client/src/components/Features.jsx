@@ -10,7 +10,7 @@ import { usePathname } from "next/navigation";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Features() {
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const titleRef = useRef(null);
   const cardsRef = useRef(null);
 
