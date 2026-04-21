@@ -1,11 +1,14 @@
+"use client"
+
 import React from 'react'
 import { Button } from './ui/button';
-
+import { useRouter } from 'next/navigation';
 
 function AccessDenied() {
+  const router = useRouter();
   const handleLogout = async () => {
     try {
-      await fetch("http://localhost:3001/api/auth/logout", {
+      await fetch("/api/auth/logout", {
         method: "POST",
         credentials: "include",
       });

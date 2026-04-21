@@ -39,7 +39,7 @@ export function LoginForm({
       const email = formData.get("email");
       const password = formData.get("password");
 
-      const res = await fetch("http://localhost:3001/api/auth/admin/login", {
+      const res = await fetch('/api/auth/admin/login', {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

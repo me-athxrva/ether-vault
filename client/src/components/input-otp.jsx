@@ -36,7 +36,7 @@ export function InputOTPForm() {
                 throw new Error("Enter valid OTP");
             }
 
-            const res = await fetch("http://localhost:3001/api/auth/admin/verify", {
+            const res = await fetch('/api/auth/admin/verify', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -64,6 +64,7 @@ export function InputOTPForm() {
                 title: "Error",
                 description: "Something went wrong."
             })
+            console.log(err)
             sessionStorage.removeItem("loginToken");
             router.replace("/issuer/login");
         } finally {

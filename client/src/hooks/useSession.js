@@ -1,18 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useSessionStore } from "@/store/useSessionStore";
 
 export function useSession() {
-  const [session, setSession] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { session, loading, setSession, clearSession } = useSessionStore();
+  const hasFetched = useRef(false);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/auth/session", {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    fetch("/api/auth/session", {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => setSession(data))
-      .finally(() => setLoading(false));
+      .then((data) => {
+        if (!data.auth) {
+          clearSession();
+        } else {
+          setSession(data);
+        }
+      })
+      .catch(() => {
+        clearSession();
+      });
   }, []);
 
   return { session, loading };

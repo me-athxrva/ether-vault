@@ -23,6 +23,7 @@ import {
 import { useRouter } from "next/navigation"
 import { ChevronsUpDownIcon, BadgeCheckIcon, LogOutIcon } from "lucide-react"
 import { sileo } from "sileo"
+import { useSessionStore } from "@/store/useSessionStore"
 
 
 export function NavUser({
@@ -30,24 +31,27 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const router = useRouter()
+  const clearSession = useSessionStore((s) => s.clearSession);
 
- const handleLogout = async () => {
-  try {
-    await fetch("http://localhost:3001/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: "POST",
+        credentials: "include",
+      });
 
-    sileo.success({
-      title: "Logged out successfully"
-    })
+      clearSession();
 
-    router.replace("/issuer/login");
-    router.refresh();
-  } catch (error) {
-    console.error("Logout failed:", error);
-  }
-};
+      sileo.success({
+        title: "Logged out successfully"
+      })
+
+      router.replace("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -58,8 +62,15 @@ export function NavUser({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">AD</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {user.name
+                    ?.trim()
+                    .split(/\s+/)
+                    .map(word => word[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -76,8 +87,15 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {user.name
+                      ?.trim()
+                      .split(/\s+/)
+                      .map(word => word[0])
+                      .join("")
+                      .toUpperCase()
+                      .slice(0, 2)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
