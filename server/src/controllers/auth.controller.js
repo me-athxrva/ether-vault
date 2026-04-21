@@ -89,6 +89,13 @@ async function userLoginController(req, res) {
       });
     }
 
+    if (user.role == "admin") {
+      return res.status(403).json({
+        message: "Issuer account, please log into issuer page.",
+        status: "failed",
+      });
+    }
+
     const isValidPassword = await user.comparePassword(password);
 
     if (!isValidPassword) {
@@ -97,7 +104,7 @@ async function userLoginController(req, res) {
         status: "failed",
       });
     }
-    
+
     const token = jwt.sign(
       {
         userId: user._id,
@@ -155,7 +162,7 @@ async function adminLoginController(req, res) {
 
     if (user.role !== "admin") {
       return res.status(403).json({
-        message: "Access denied. Not an admin.",
+        message: "Access denied. Not an Issuer.",
         status: "failed",
       });
     }
@@ -169,7 +176,6 @@ async function adminLoginController(req, res) {
       });
     }
 
-    
     const existingCooldown = await redis.get(`otp:${user._id}:cooldown`);
     if (existingCooldown) {
       return res.status(429).json({
@@ -191,7 +197,7 @@ async function adminLoginController(req, res) {
     console.log(`Admin OTP for ${email}: ${otp}`);
 
     return res.status(200).json({
-      message: `OTP sent to ${user._id}`,
+      message: `OTP sent to ${user.email}`,
       token: user._id,
       status: "success",
     });
@@ -311,10 +317,38 @@ async function logoutController(req, res) {
   }
 }
 
+async function sessionController(req, res) {
+  try {
+    const token = req.cookies?.token;
+
+    if (!token) {
+      return res.status(401).json({
+        authenticated: false,
+        message: "No session found",
+        status: "failed",
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    return res.status(200).json({
+      authenticated: true,
+      role: decoded.role,
+    });
+  } catch (err) {
+    return res.status(401).json({
+      authenticated: false,
+      message: "Invalid or expired session",
+      status: "failed",
+    });
+  }
+}
+
 module.exports = {
   userRegisterController,
   userLoginController,
   adminLoginController,
   verifyOtpController,
   logoutController,
+  sessionController,
 };

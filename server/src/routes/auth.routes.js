@@ -10,5 +10,6 @@ router.post("/login", authController.userLoginController);
 router.post("/admin/login", authController.adminLoginController);
 router.post("/admin/verify", authController.verifyOtpController);
 router.post("/logout", authController.logoutController);
+router.get("/session", authController.sessionController);
 
 module.exports = router;
