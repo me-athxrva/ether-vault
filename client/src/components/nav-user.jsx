@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useRouter } from "next/navigation"
 import { ChevronsUpDownIcon, BadgeCheckIcon, LogOutIcon } from "lucide-react"
+import { sileo } from "sileo"
 
 
 export function NavUser({
@@ -36,6 +37,10 @@ export function NavUser({
       method: "POST",
       credentials: "include",
     });
+
+    sileo.success({
+      title: "Logged out successfully"
+    })
 
     router.replace("/issuer/login");
     router.refresh();

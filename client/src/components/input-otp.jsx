@@ -19,6 +19,7 @@ import {
     InputOTPGroup,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
+import { sileo } from "sileo"
 
 export function InputOTPForm() {
     const router = useRouter();
@@ -45,17 +46,24 @@ export function InputOTPForm() {
             });
 
             const data = await res.json();
-            alert(data.message);
 
             if (res.ok) {
+                sileo.success({
+                    title: "Logged in successfully",
+                })
                 sessionStorage.removeItem("loginToken");
                 router.replace("/issuer/dashboard");
             } else {
-                alert(data.message || "Invalid OTP");
+                sileo.error({
+                    title: data.message
+                })
             }
 
         } catch (err) {
-            console.log(err.message);
+            sileo.error({
+                title: "Error",
+                description: "Something went wrong."
+            })
             sessionStorage.removeItem("loginToken");
             router.replace("/issuer/login");
         } finally {

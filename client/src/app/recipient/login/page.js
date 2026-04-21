@@ -16,7 +16,7 @@ export default function RecipientLogin() {
       gsap.from(refs.glow.current, {
         scale: 0,
         opacity: 0,
-        duration: 1.5,
+        duration: 2,
         ease: "power3.out",
       });
     });

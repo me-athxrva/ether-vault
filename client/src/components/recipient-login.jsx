@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Loader2, ArrowLeft } from "lucide-react"
+import { sileo } from "sileo"
 
 export function LoginForm({
     className,
@@ -50,14 +51,28 @@ export function LoginForm({
 
             const data = await res.json();
 
-            if (res.ok) {
+            if (res.status == 429) {
+                sileo.warning({
+                    title: "Too many attempts",
+                    description: data.message,
+                });
+            } else if (res.ok) {
+                sileo.success({
+                    title: "Logged in successfully",
+                })
                 router.replace("/recipient/dashboard");
             } else {
-                alert(data.message || "Invalid Credentials");
+                sileo.error({
+                    title: data.status,
+                    description: data.message,
+                });
             }
 
         } catch (err) {
-            alert(err.message || "Something went wrong");
+            sileo.error({
+                title: "Error",
+                description: "Something went wrong.",
+            });
         } finally {
             setIsLoading(false);
         }

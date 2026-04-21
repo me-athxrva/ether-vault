@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Loader2, ArrowLeft } from "lucide-react"
+import { sileo } from "sileo"
 
 export function LoginForm({
   className,
@@ -49,19 +50,34 @@ export function LoginForm({
 
       const data = await res.json();
 
-      if (!res.ok) {
-        router.replace("/issuer/login");
-        throw new Error(data.message || "Login failed");
+      if (res.status == 429) {
+        sileo.warning({
+          title: "Too many attempts",
+          description: data.message,
+        });
+      } else if (res.ok) {
+        sileo.success({
+          title: "OTP Sent successfully ",
+          description: data.message
+        })
+
+        sessionStorage.setItem("loginToken", data.token);
+
+        setTimeout(() => {
+          router.push("/issuer/login/otp");
+        }, 100);
+      } else {
+        sileo.error({
+          title: data.status,
+          description: data.message,
+        });
       }
 
-      sessionStorage.setItem("loginToken", data.token);
-
-      setTimeout(() => {
-        router.push("/issuer/login/otp");
-      }, 100);
-
     } catch (err) {
-      alert(err.message);
+      sileo.error({
+        title: "Error",
+        description: "Something went wrong.",
+      });
     } finally {
       setIsLoading(false);
     }
