@@ -118,8 +118,10 @@ async function userLoginController(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: false, // change to true with HTTPS hosting
+      sameSite: "lax", // "none" with HTTPS hosting
+      path: "/",
+      maxAge: 604800000,
     });
 
     return res.status(200).json({
@@ -276,6 +278,8 @@ async function verifyOtpController(req, res) {
       httpOnly: true,
       secure: false, //change to true with hosting
       sameSite: "lax", //"none" with hosting i.e. https
+      path: "/",
+      maxAge: 604800000,
     });
 
     return res.status(200).json({
@@ -299,8 +303,9 @@ async function logoutController(req, res) {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: true,
-      sameSite: "Strict",
+      secure: false,
+      sameSite: "lax",
+      path: "/",
     });
 
     return res.status(200).json({
@@ -322,23 +327,44 @@ async function sessionController(req, res) {
     const token = req.cookies?.token;
 
     if (!token) {
-      return res.status(401).json({
-        authenticated: false,
-        message: "No session found",
-        status: "failed",
+      return res.status(200).json({
+        auth: false,
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
+      return res.status(200).json({
+        auth: false,
+      });
+    }
+
+    const user = await userModel
+      .findById(decoded.userId)
+      .select("name email role");
+
+    if (!user) {
+      return res.status(200).json({
+        auth: false,
+      });
+    }
 
     return res.status(200).json({
-      authenticated: true,
-      role: decoded.role,
+      auth: true,
+      role: user.role,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (err) {
-    return res.status(401).json({
-      authenticated: false,
-      message: "Invalid or expired session",
+    console.error(err);
+
+    return res.status(500).json({
+      message: "Internal Server Error",
       status: "failed",
     });
   }
