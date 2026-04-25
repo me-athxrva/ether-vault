@@ -36,7 +36,7 @@ export default function Navbar() {
         </Link>
 
         <ul className="hidden items-center gap-1 md:flex">
-          {["Platform", "Security", "Solutions", "Portal"].map((item) => (
+          {["Platform", "Security", "Solutions", "Verify"].map((item) => (
             <li key={item}>
               <Link href={"/" + item.toLowerCase()} className="rounded-full px-4 py-2 text-sm font-medium text-[#b3b3b3] transition-colors duration-250 hover:bg-surface-low hover:text-white">
                 {item}
