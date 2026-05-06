@@ -8,7 +8,12 @@ const documentSchema = new mongoose.Schema(
       trim: true,
     },
 
-    owner: {
+    receiverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    issuerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -17,7 +22,6 @@ const documentSchema = new mongoose.Schema(
     hash: {
       type: String,
       required: true,
-      unique: true,
     },
 
     verifyId: {
@@ -41,11 +45,22 @@ const documentSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    organisationName: {
+      type: String,
+      required: false,
+    },
+    organisationId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Organisation",
+      required: true,
+    },
   },
   {
     timestamps: true,
   },
 );
+
+documentSchema.index({ hash: 1, organisationId: 1 }, { unique: true });
 
 const Document = mongoose.model("Document", documentSchema);
 

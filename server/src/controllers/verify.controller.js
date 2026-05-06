@@ -1,36 +1,39 @@
 const Document = require("../models/document.model");
-const generateFileHash = require("../utils/hash");
 
 async function verifyDocController(req, res) {
   try {
-    let doc;
+    const { hash, verifyId: rawVerifyId } = req.body || {};
+    let query = {};
 
-    if (req.file && req.body.verifyId) {
+    if (hash && rawVerifyId) {
       return res.status(400).json({
-        message: "Provide either file or verifyId, not both",
-      });
-    }
-
-    // file verification
-    if (req.file) {
-      const hash = generateFileHash(req.file.buffer);
-      doc = await Document.findOne({ hash });
-    }
-
-    // id verification
-    else if (req.body.verifyId) {
-      let verifyId = req.body.verifyId.trim().toUpperCase();
-      verifyId = `DOC-${verifyId}`;
-
-      doc = await Document.findOne({ verifyId });
-    } else {
-      return res.status(400).json({
-        message: "Provide either file or verifyId",
+        message: "Provide either hash or verifyId, not both",
         status: "failed",
       });
     }
 
-    if (!doc) {
+    if (hash) {
+      query = { hash };
+    } else if (rawVerifyId) {
+      let vId = rawVerifyId.trim().toUpperCase();
+      if (!vId.startsWith("DOC-")) {
+        vId = `DOC-${vId}`;
+      }
+      query = { verifyId: vId };
+    } else {
+      return res.status(400).json({
+        message: "Provide either document hash or verification ID",
+        status: "failed",
+      });
+    }
+
+    // Find documents and populate all related names
+    const docs = await Document.find(query)
+      .populate("organisationId", "name")
+      .populate("issuerId", "name email")
+      .populate("receiverId", "name email");
+
+    if (!docs || docs.length === 0) {
       return res.status(404).json({
         message: "Document not found or invalid",
         status: "failed",
@@ -38,14 +41,23 @@ async function verifyDocController(req, res) {
     }
 
     return res.status(200).json({
-      message: "Document verified successfully",
-      data: {
-        verifyId: doc.verifyId,
-        title: doc.title,
-        // fileUrl: `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${doc.cid}`,
-        cid: doc.cid,
-        issuedAt: doc.createdAt,
-      },
+      message: "Document(s) verified successfully",
+      count: docs.length,
+      results: docs.map((d) => ({
+        verifyId: d.verifyId,
+        title: d.title,
+        organisation: d.organisationId?.name || d.organisationName,
+        issuer: d.issuerId?.name || "Unknown Issuer",
+        receiver: d.receiverId?.name || "Unknown Receiver",
+        txHash: d.txHash,
+        issuedAt: new Date(d.createdAt).toLocaleDateString("en-GB", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      })),
       status: "success",
     });
   } catch (err) {

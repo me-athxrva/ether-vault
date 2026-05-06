@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const verifyDocController = require("../controllers/verify.controller");
+const { getAllOrganisationsController } = require("../controllers/organisation.controller");
 const { authLimiter } = require("../middlewares/limiter.middleware");
 
-router.post("/verify", authLimiter, verifyDocController);
+router.get("/all", authLimiter, getAllOrganisationsController);
 
 module.exports = router;

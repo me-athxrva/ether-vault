@@ -1,15 +1,17 @@
 const userModel = require("../models/user.model");
+const Organisation = require("../models/organisation.model");
 const redis = require("../config/redis");
 const jwt = require("jsonwebtoken");
 
 async function userRegisterController(req, res) {
-  const { email, name, password } = req.body || {};
+  const { email, name, password, organisationId } = req.body || {};
 
-  if (!email || !name || !password) {
+  if (!email || !name || !password || !organisationId) {
     const missingFields = [];
     if (!email) missingFields.push("email");
     if (!name) missingFields.push("name");
     if (!password) missingFields.push("password");
+    if (!organisationId) missingFields.push("organisationId");
 
     return res.status(400).json({
       message: `Missing fields: ${missingFields.join(", ")}`,
@@ -33,15 +35,107 @@ async function userRegisterController(req, res) {
   }
 
   try {
+    const organisation = await Organisation.findById(organisationId);
+    if (!organisation) {
+      return res.status(404).json({
+        message: "Organisation not found",
+        status: "failed",
+      });
+    }
+
     const user = await userModel.create({
       email,
       password,
       name,
       role: "user",
+      organisationName: organisation.name,
+      organisationId: organisation._id,
     });
+
+    // Add user to organisation
+    organisation.users.push(user._id);
+    await organisation.save();
 
     return res.status(201).json({
       user: { id: user._id },
+      organisation: { id: organisation._id, name: organisation.name },
+      status: "success",
+    });
+  } catch (err) {
+    if (
+      err.code === 11000 ||
+      err.message.includes("duplicate key") ||
+      err.message.includes("already exists")
+    ) {
+      return res.status(409).json({
+        message: "User already exists",
+        status: "failed",
+      });
+    }
+
+    console.log(err);
+
+    return res.status(500).json({
+      message: "Internal server error",
+      status: "failed",
+    });
+  }
+}
+
+async function adminRegisterController(req, res) {
+  const { email, name, password, organisationName } = req.body || {};
+
+  if (!email || !name || !password || !organisationName) {
+    const missingFields = [];
+    if (!email) missingFields.push("email");
+    if (!name) missingFields.push("name");
+    if (!password) missingFields.push("password");
+    if (!organisationName) missingFields.push("organisationName");
+
+    return res.status(400).json({
+      message: `Missing fields: ${missingFields.join(", ")}`,
+      status: "failed",
+    });
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      message: "Invalid email format",
+      status: "failed",
+    });
+  }
+
+  if (password.length < 8) {
+    return res.status(400).json({
+      message: "Password must be at least 8 characters",
+      status: "failed",
+    });
+  }
+
+  try {
+    // Check if organisation exists or create it
+    let organisation = await Organisation.findOne({ name: organisationName });
+    if (!organisation) {
+      organisation = await Organisation.create({ name: organisationName });
+    }
+
+    const user = await userModel.create({
+      email,
+      password,
+      name,
+      role: "admin",
+      organisationName: organisation.name,
+      organisationId: organisation._id,
+    });
+
+    // Add user to organisation
+    organisation.users.push(user._id);
+    await organisation.save();
+
+    return res.status(201).json({
+      user: { id: user._id },
+      organisation: { id: organisation._id, name: organisation.name },
       status: "success",
     });
   } catch (err) {
@@ -372,6 +466,7 @@ async function sessionController(req, res) {
 
 module.exports = {
   userRegisterController,
+  adminRegisterController,
   userLoginController,
   adminLoginController,
   verifyOtpController,

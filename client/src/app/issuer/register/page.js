@@ -24,12 +24,7 @@ export default function IssuerRegister() {
         />
       </div>
 
-      <div
-        className="relative z-20 w-full max-w-sm 
-                bg-black/40 backdrop-blur-xl 
-                border border-white/10 
-                rounded-[20px] p-6"
-      >
+      <div className="relative z-20 w-full flex justify-center">
         <SignupForm />
       </div>
     </section>

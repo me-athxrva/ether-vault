@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const authRouter = require("./routes/auth.routes");
 const docRouter = require("./routes/document.routes");
 const verifyRouter = require("./routes/verify.routes");
+const organisationRouter = require("./routes/organisation.routes");
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use(
 app.use("/api/auth", authRouter);
 app.use("/api/document", docRouter);
 app.use("/api/document", verifyRouter);
+app.use("/api/organisation", organisationRouter);
 
 module.exports = app;

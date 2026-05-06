@@ -6,6 +6,7 @@ const { authLimiter } = require("../middlewares/limiter.middleware");
 router.use(authLimiter);
 
 router.post("/register", authController.userRegisterController);
+router.post("/admin/register", authController.adminRegisterController);
 router.post("/login", authController.userLoginController);
 router.post("/admin/login", authController.adminLoginController);
 router.post("/admin/verify", authController.verifyOtpController);
