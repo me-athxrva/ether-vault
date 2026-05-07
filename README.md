@@ -1,4 +1,4 @@
-# <p align="center">🛡️ EtherVault</p>
+# <p align="center">EtherVault</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=semver" alt="Version" />
@@ -9,25 +9,25 @@
 
 ![EtherVault Hero](./ethervault_hero_1778106194126.png)
 
-## 🏛️ Enterprise-Grade Document Sovereignty
+## Enterprise-Grade Document Sovereignty
 **EtherVault** is an immutable document verification ecosystem engineered for high-integrity organizations. By leveraging decentralized blockchain anchors and a multi-tenant architecture, EtherVault provides a cryptographic "Source of Truth" for digital credentials, legal certifications, and sensitive documentation.
 
 Designed with a **Stealth-Luxury** aesthetic, the platform bridges the gap between complex blockchain infrastructure and premium user experience.
 
 ---
 
-## 💎 Core Capabilities
+## Core Capabilities
 
-*   **🔗 Cryptographic Anchoring**: Every document issuance is hashed and permanently anchored to the Ethereum EVM, ensuring zero-knowledge proof of integrity.
-*   **🏢 Multi-Tenant Infrastructure**: Enterprise-ready architecture supporting isolated organizational silos within a unified verification gateway.
-*   **🔐 Military-Grade Security**: Role-Based Access Control (RBAC) enforced at the protocol level, protecting issuance workflows from unauthorized access.
-*   **🕵️ Zero-Leak Verification**: A privacy-first verification engine that validates authenticity without exposing underlying metadata or storage locations.
-*   **🚀 Instant Proof Generation**: Dynamic QR-Code generation and deep-link integration for immediate, mobile-first verification.
-*   **🛡️ Adaptive Rate Limiting**: Upstash-backed flood protection ensures high availability for public verification lookups.
+*   **Cryptographic Anchoring**: Every document issuance is hashed and permanently anchored to the Ethereum EVM, ensuring zero-knowledge proof of integrity.
+*   **Multi-Tenant Infrastructure**: Enterprise-ready architecture supporting isolated organizational silos within a unified verification gateway.
+*   **Military-Grade Security**: Role-Based Access Control (RBAC) enforced at the protocol level, protecting issuance workflows from unauthorized access.
+*   **Zero-Leak Verification**: A privacy-first verification engine that validates authenticity without exposing underlying metadata or storage locations.
+*   **Instant Proof Generation**: Dynamic QR-Code generation and deep-link integration for immediate, mobile-first verification.
+*   **Adaptive Rate Limiting**: Upstash-backed flood protection ensures high availability for public verification lookups.
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 ### Protocol Layer
 - **Smart Contracts**: Solidity / Hardhat
@@ -48,7 +48,7 @@ Designed with a **Stealth-Luxury** aesthetic, the platform bridges the gap betwe
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```mermaid
 graph TD
@@ -63,7 +63,7 @@ graph TD
 
 ---
 
-## 📂 Repository Architecture
+## Repository Architecture
 
 | Directory | Scope |
 | :--- | :--- |
@@ -73,7 +73,7 @@ graph TD
 
 ---
 
-## 🚀 Deployment Guide
+## Deployment Guide
 
 ### System Requirements
 - Node.js (v20+ Recommended)
@@ -106,7 +106,7 @@ npm run dev
 
 ---
 
-## 🔑 Environment Specifications
+## Environment Specifications
 
 ### Server configuration (`/server/.env`)
 ```env
@@ -126,7 +126,7 @@ NEXT_PUBLIC_CONTRACT_ADDRESS=your_deployed_contract
 
 ---
 
-## 🔒 Security Posture
+## Security Posture
 EtherVault undergoes continuous internal auditing focusing on:
 - **Collision Resistance**: Document hashes are calculated client-side before submission.
 - **Data Obfuscation**: Public endpoints return filtered DTOs (Data Transfer Objects).
@@ -134,7 +134,7 @@ EtherVault undergoes continuous internal auditing focusing on:
 
 ---
 
-## 📄 Licensing
+## Licensing
 This ecosystem is distributed under the **ISC License**. Commercial use and redistribution are permitted under the terms of the license.
 
 <p align="center">
