@@ -54,6 +54,10 @@ const documentSchema = new mongoose.Schema(
       ref: "Organisation",
       required: true,
     },
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
   },
   {
     timestamps: true,

@@ -1,4 +1,5 @@
 const Document = require("../models/document.model");
+const { logActivity } = require("../utils/activityLogger");
 
 async function verifyDocController(req, res) {
   try {
@@ -27,16 +28,40 @@ async function verifyDocController(req, res) {
       });
     }
 
-    // Find documents and populate all related names
     const docs = await Document.find(query)
       .populate("organisationId", "name")
       .populate("issuerId", "name email")
       .populate("receiverId", "name email");
 
     if (!docs || docs.length === 0) {
+
+      logActivity({
+        userId: docs?.[0]?.issuerId?._id || docs?.[0]?.issuerId || null,
+        type: "verification_failed",
+        message: `Verification failed for ${hash ? `hash: ${hash.substring(0, 12)}...` : `verifyId: ${rawVerifyId}`}`,
+        metadata: {
+          verifyId: rawVerifyId || null,
+        },
+      }).catch(() => {});
+
       return res.status(404).json({
         message: "Document not found or invalid",
         status: "failed",
+      });
+    }
+
+    for (const d of docs) {
+      logActivity({
+        userId: d.issuerId?._id || d.issuerId,
+        type: "verification_success",
+        message: `Document "${d.title}" (${d.verifyId}) verified successfully`,
+        metadata: {
+          documentId: d._id,
+          documentTitle: d.title,
+          verifyId: d.verifyId,
+          txHash: d.txHash,
+        },
+        organisationId: d.organisationId?._id || d.organisationId,
       });
     }
 
@@ -50,6 +75,7 @@ async function verifyDocController(req, res) {
         issuer: d.issuerId?.name || "Unknown Issuer",
         receiver: d.receiverId?.name || "Unknown Receiver",
         txHash: d.txHash,
+        isRevoked: d.isRevoked,
         issuedAt: new Date(d.createdAt).toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "long",

@@ -2,6 +2,7 @@ const userModel = require("../models/user.model");
 const Organisation = require("../models/organisation.model");
 const redis = require("../config/redis");
 const jwt = require("jsonwebtoken");
+const { logActivity } = require("../utils/activityLogger");
 
 async function userRegisterController(req, res) {
   const { email, name, password, organisationId } = req.body || {};
@@ -50,9 +51,9 @@ async function userRegisterController(req, res) {
       role: "user",
       organisationName: organisation.name,
       organisationId: organisation._id,
+      isDemo: req.body.isDemo || false,
     });
 
-    // Add user to organisation
     organisation.users.push(user._id);
     await organisation.save();
 
@@ -114,7 +115,7 @@ async function adminRegisterController(req, res) {
   }
 
   try {
-    // Check if organisation exists or create it
+
     let organisation = await Organisation.findOne({ name: organisationName });
     if (!organisation) {
       organisation = await Organisation.create({ name: organisationName });
@@ -127,9 +128,9 @@ async function adminRegisterController(req, res) {
       role: "admin",
       organisationName: organisation.name,
       organisationId: organisation._id,
+      isDemo: req.body.isDemo || false,
     });
 
-    // Add user to organisation
     organisation.users.push(user._id);
     await organisation.save();
 
@@ -212,10 +213,18 @@ async function userLoginController(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // change to true with HTTPS hosting
-      sameSite: "lax", // "none" with HTTPS hosting
+      secure: false,
+      sameSite: "lax",
       path: "/",
       maxAge: 604800000,
+    });
+
+    logActivity({
+      userId: user._id,
+      type: "login",
+      message: `User ${email} logged in`,
+      metadata: { ip: req.ip },
+      organisationId: user.organisationId || null,
     });
 
     return res.status(200).json({
@@ -247,7 +256,7 @@ async function adminLoginController(req, res) {
   }
 
   try {
-    const user = await userModel.findOne({ email }).select("+password +role");
+    const user = await userModel.findOne({ email }).select("+password +role +isDemo");
 
     if (!user) {
       return res.status(401).json({
@@ -280,7 +289,14 @@ async function adminLoginController(req, res) {
       });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000);
+    let otp;
+    if (user.isDemo) {
+      otp = 123456;
+    } else {
+      do {
+        otp = Math.floor(100000 + Math.random() * 900000);
+      } while (otp === 123456);
+    }
 
     await redis.set(`otp:${user._id}`, otp, {
       ex: 300,
@@ -293,7 +309,7 @@ async function adminLoginController(req, res) {
     console.log(`Admin OTP for ${email}: ${otp}`);
 
     return res.status(200).json({
-      message: `OTP sent to ${user.email}`,
+      message: user.isDemo ? "Demo account OTP is 123456" : `OTP sent to ${user.email}`,
       token: user._id,
       status: "success",
     });
@@ -370,10 +386,18 @@ async function verifyOtpController(req, res) {
 
     res.cookie("token", jwt_token, {
       httpOnly: true,
-      secure: false, //change to true with hosting
-      sameSite: "lax", //"none" with hosting i.e. https
+      secure: false,
+      sameSite: "lax",
       path: "/",
       maxAge: 604800000,
+    });
+
+    logActivity({
+      userId: user._id,
+      type: "login",
+      message: `Admin ${user.email || "unknown"} logged in via OTP`,
+      metadata: { ip: req.ip },
+      organisationId: user.organisationId || null,
     });
 
     return res.status(200).json({
@@ -437,7 +461,7 @@ async function sessionController(req, res) {
 
     const user = await userModel
       .findById(decoded.userId)
-      .select("name email role");
+      .select("name email +role");
 
     if (!user) {
       return res.status(200).json({

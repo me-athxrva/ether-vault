@@ -3,7 +3,7 @@ const path = require("path");
 
 const storage = multer.memoryStorage({
   destination: function (req, file, cb) {
-    cb(null, "temp-upload/"); 
+    cb(null, "temp-upload/");
   },
   filename: function (req, file, cb) {
     const uniqueName = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -23,7 +23,7 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 5 * 1024 * 1024,
   },
 });
 

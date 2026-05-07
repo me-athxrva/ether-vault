@@ -17,7 +17,7 @@ async function uploadToIPFS(file) {
         maxBodyLength: Infinity,
         headers: {
           ...formData.getHeaders(),
-          Authorization: `Bearer ${process.env.PINATA_JWT}`, // changes: use JWT
+          Authorization: `Bearer ${process.env.PINATA_JWT}`,
         },
       }
     );

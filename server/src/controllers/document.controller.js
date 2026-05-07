@@ -3,11 +3,13 @@ const Document = require("../models/document.model");
 const User = require("../models/user.model");
 const { storeHashOnChain } = require("../services/chain.service");
 const { uploadToIPFS } = require("../services/ipfs.service");
+const { logActivity } = require("../utils/activityLogger");
 const crypto = require("crypto");
 
 async function uploadDocumentController(req, res) {
   try {
-    const { receiverEmail, title } = req.body || {};
+    const { receiverEmail, recipientEmail, title, metadata } = req.body || {};
+    const finalEmail = receiverEmail || recipientEmail;
 
     if (!req.file) {
       return res.status(400).json({
@@ -16,15 +18,14 @@ async function uploadDocumentController(req, res) {
       });
     }
 
-    if (!receiverEmail) {
+    if (!finalEmail) {
       return res.status(400).json({
         message: "Receiver email is required",
         status: "failed",
       });
     }
 
-    // Lookup receiver
-    const receiver = await User.findOne({ email: receiverEmail });
+    const receiver = await User.findOne({ email: finalEmail }).select("+role");
     if (!receiver) {
       return res.status(404).json({
         message: "Receiver not found",
@@ -32,7 +33,13 @@ async function uploadDocumentController(req, res) {
       });
     }
 
-    // Lookup issuer and their organisation
+    if (receiver.role === "admin") {
+      return res.status(403).json({
+        message: "You cannot issue documents to an administrator account.",
+        status: "failed",
+      });
+    }
+
     const issuer = await User.findById(req.user.userId);
     if (!issuer) {
       return res.status(404).json({
@@ -48,7 +55,6 @@ async function uploadDocumentController(req, res) {
       });
     }
 
-    // Check if receiver belongs to the same organisation
     if (!receiver.organisationId || receiver.organisationId.toString() !== issuer.organisationId.toString()) {
       return res.status(403).json({
         message: "You can only issue documents to users within your own organisation.",
@@ -56,18 +62,14 @@ async function uploadDocumentController(req, res) {
       });
     }
 
-    // generating hash
     const hash = generateFileHash(req.file.buffer);
-    
-    // Generating a unique verifyId even for the same hash
-    // Format: DOC-[Random 6 chars]-[Hash Prefix]
+
     const randomSuffix = crypto.randomBytes(3).toString("hex").toUpperCase();
     const verifyId = `DOC-${randomSuffix}-${hash.substring(0, 6).toUpperCase()}`;
 
-    // DB duplicate check within the same organisation
-    const existingDocument = await Document.findOne({ 
-      hash, 
-      organisationId: issuer.organisationId 
+    const existingDocument = await Document.findOne({
+      hash,
+      organisationId: issuer.organisationId
     });
 
     if (existingDocument) {
@@ -77,13 +79,10 @@ async function uploadDocumentController(req, res) {
       });
     }
 
-    // IPFS upload
     const cid = await uploadToIPFS(req.file);
 
-    // storing on blockchain
     const txHash = await storeHashOnChain(hash);
 
-    // db record save
     const document = await Document.create({
       title: title || req.file.originalname,
       receiverId: receiver._id,
@@ -94,7 +93,24 @@ async function uploadDocumentController(req, res) {
       cid,
       verifyId,
       txHash,
+      metadata: metadata ? JSON.parse(metadata) : {},
       fileUrl: `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${cid}`,
+    });
+
+    logActivity({
+      userId: issuer._id,
+      type: "document_upload",
+      message: `Uploaded document "${document.title}" to ${receiver.email}`,
+      metadata: {
+        documentId: document._id,
+        documentTitle: document.title,
+        recipientEmail: receiver.email,
+        recipientName: receiver.name,
+        verifyId: document.verifyId,
+        txHash: document.txHash,
+        cid: document.cid,
+      },
+      organisationId: issuer.organisationId,
     });
 
     return res.status(201).json({
@@ -115,4 +131,60 @@ async function uploadDocumentController(req, res) {
   }
 }
 
-module.exports = { uploadDocumentController };
+async function revokeDocumentController(req, res) {
+  try {
+    const { id } = req.params;
+    const issuerId = req.user.userId;
+
+    const document = await Document.findById(id);
+
+    if (!document) {
+      return res.status(404).json({
+        message: "Document not found",
+        status: "failed",
+      });
+    }
+
+    if (document.issuerId.toString() !== issuerId.toString()) {
+      return res.status(403).json({
+        message: "You are not authorized to revoke this document",
+        status: "failed",
+      });
+    }
+
+    if (document.isRevoked) {
+      return res.status(400).json({
+        message: "Document is already revoked",
+        status: "failed",
+      });
+    }
+
+    document.isRevoked = true;
+    await document.save();
+
+    logActivity({
+      userId: issuerId,
+      type: "document_revocation",
+      message: `Revoked document "${document.title}"`,
+      metadata: {
+        documentId: document._id,
+        documentTitle: document.title,
+        verifyId: document.verifyId,
+      },
+      organisationId: document.organisationId,
+    });
+
+    return res.status(200).json({
+      message: "Document revoked successfully",
+      status: "success",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Revocation failed",
+      status: "failed",
+    });
+  }
+}
+
+module.exports = { uploadDocumentController, revokeDocumentController };

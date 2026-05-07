@@ -38,6 +38,11 @@ const userSchema = new mongoose.Schema(
         return this.role === 'admin';
       }
     },
+    isDemo: {
+      type: Boolean,
+      default: false,
+      select: true,
+    },
   },
   {
     timestamps: true,
