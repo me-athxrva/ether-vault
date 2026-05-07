@@ -91,14 +91,14 @@ export function SignupForm({
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     <tr className="hover:bg-white/3 transition-colors">
-                      <td className="px-4 py-3 text-white/40">Org A</td>
-                      <td className="px-4 py-3 font-mono text-white/80 select-all whitespace-nowrap">demo1@email.com</td>
-                      <td className="px-4 py-3 font-mono text-white/80 select-all">Password123</td>
+                      <td className="px-4 py-3 text-white/40">EtherVault Global</td>
+                      <td className="px-4 py-3 font-mono text-white/80 select-all whitespace-nowrap">demo.admin@ethervault.com</td>
+                      <td className="px-4 py-3 font-mono text-white/80 select-all">password123</td>
                     </tr>
                     <tr className="hover:bg-white/3 transition-colors">
-                      <td className="px-4 py-3 text-white/40">Org B</td>
-                      <td className="px-4 py-3 font-mono text-white/80 select-all whitespace-nowrap">demo2@email.com</td>
-                      <td className="px-4 py-3 font-mono text-white/80 select-all">Password123</td>
+                      <td className="px-4 py-3 text-white/40">Meth Pvt. Ltd.</td>
+                      <td className="px-4 py-3 font-mono text-white/80 select-all whitespace-nowrap">demo.admin2@ethervault.com</td>
+                      <td className="px-4 py-3 font-mono text-white/80 select-all">password123</td>
                     </tr>
                   </tbody>
                 </table>
