@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/License-ISC-orange?style=for-the-badge" alt="License" />
 </p>
 
-![EtherVault Hero](./ethervault_hero_1778106194126.png)
+
 
 ## Enterprise-Grade Document Sovereignty
 **EtherVault** is an immutable document verification ecosystem engineered for high-integrity organizations. By leveraging decentralized blockchain anchors and a multi-tenant architecture, EtherVault provides a cryptographic "Source of Truth" for digital credentials, legal certifications, and sensitive documentation.
