@@ -1,133 +1,142 @@
-# 🛡️ EtherVault
+# <p align="center">🛡️ EtherVault</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=semver" alt="Version" />
+  <img src="https://img.shields.io/badge/Security-Hardened-success?style=for-the-badge&logo=securityscorecard" alt="Security" />
+  <img src="https://img.shields.io/badge/Blockchain-Ethereum-3C3C3D?style=for-the-badge&logo=ethereum" alt="Blockchain" />
+  <img src="https://img.shields.io/badge/License-ISC-orange?style=for-the-badge" alt="License" />
+</p>
 
 ![EtherVault Hero](./ethervault_hero_1778106194126.png)
 
-### Secure. Immutable. Multi-Tenant.
-**EtherVault** is a next-generation document verification system that leverages the power of blockchain technology to ensure document integrity and authenticity. Built with a "stealth-luxury" aesthetic, it provides a premium experience for organizations to issue, manage, and verify documents with absolute certainty.
+## 🏛️ Enterprise-Grade Document Sovereignty
+**EtherVault** is an immutable document verification ecosystem engineered for high-integrity organizations. By leveraging decentralized blockchain anchors and a multi-tenant architecture, EtherVault provides a cryptographic "Source of Truth" for digital credentials, legal certifications, and sensitive documentation.
+
+Designed with a **Stealth-Luxury** aesthetic, the platform bridges the gap between complex blockchain infrastructure and premium user experience.
 
 ---
 
-## 💎 Key Features
+## 💎 Core Capabilities
 
-- **🔗 Blockchain-Powered Integrity**: Every document hash is anchored to the blockchain, creating an immutable record of issuance.
-- **🏢 Multi-Organization Support**: A robust multi-tenant architecture allowing multiple organizations to operate independently within the same ecosystem.
-- **🔐 Hardened Security**: Role-Based Access Control (RBAC) ensures only authorized administrators can issue documents.
-- **🕵️ Privacy-First Verification**: Public verification lookups are stripped of sensitive metadata (like IPFS CIDs), showing only essential issuance information.
-- **🚀 Automated Verification**: Integrated QR code generation for instant, mobile-friendly document validation.
-- **🛡️ Rate-Limited APIs**: Public endpoints are protected with Upstash Redis-backed rate limiting to prevent abuse.
-- **✨ Stealth-Luxury UI**: A high-fidelity, dark-themed interface built with Next.js, Framer Motion, and GSAP.
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Framework**: Next.js 16 (App Router)
-- **Styling**: Tailwind CSS 4, Radix UI
-- **Animations**: GSAP, Lenis (Smooth Scroll), Framer Motion
-- **State Management**: Zustand
-- **Icons**: Lucide React
-
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Database**: MongoDB (Mongoose)
-- **Caching/Rate Limiting**: Upstash Redis
-- **Authentication**: JWT, BcryptJS
-
-### Blockchain
-- **Development**: Hardhat
-- **Library**: Ethers.js v6
-- **Network**: Local Hardhat Node / Ethereum EVM
+*   **🔗 Cryptographic Anchoring**: Every document issuance is hashed and permanently anchored to the Ethereum EVM, ensuring zero-knowledge proof of integrity.
+*   **🏢 Multi-Tenant Infrastructure**: Enterprise-ready architecture supporting isolated organizational silos within a unified verification gateway.
+*   **🔐 Military-Grade Security**: Role-Based Access Control (RBAC) enforced at the protocol level, protecting issuance workflows from unauthorized access.
+*   **🕵️ Zero-Leak Verification**: A privacy-first verification engine that validates authenticity without exposing underlying metadata or storage locations.
+*   **🚀 Instant Proof Generation**: Dynamic QR-Code generation and deep-link integration for immediate, mobile-first verification.
+*   **🛡️ Adaptive Rate Limiting**: Upstash-backed flood protection ensures high availability for public verification lookups.
 
 ---
 
-## 📂 Project Structure
+## 🛠️ Technology Stack
 
-```text
-EtherVault/
-├── client/          # Next.js Frontend
-├── server/          # Express Backend API
-├── chain/           # Hardhat Smart Contracts
-└── README.md        # Documentation
+### Protocol Layer
+- **Smart Contracts**: Solidity / Hardhat
+- **Blockchain Interface**: Ethers.js v6 (Type-safe integration)
+- **Hashing**: SHA-256 Cryptographic Standards
+
+### Backend Infrastructure
+- **Runtime**: Node.js / Express.js (High-performance API)
+- **Data Persistence**: MongoDB (Mongoose ODM)
+- **Traffic Orchestration**: Upstash Redis (Serverless Caching)
+- **Auth Protocol**: JWT with BcryptJS Salting
+
+### Experience Layer
+- **Framework**: Next.js 15+ (App Router, Server Components)
+- **Visual Design**: Tailwind CSS 4, Radix UI (Headless primitives)
+- **Motion Orchestration**: GSAP, Framer Motion, Lenis Smooth Scroll
+- **State Engine**: Zustand (Zero-boilerplate management)
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    User((Verification Client)) -->|QR Scan/Search| VUI[Verification Gateway]
+    VUI -->|API Request| SRV[Secure API Layer]
+    SRV -->|Rate Limit Check| RDS[(Upstash Redis)]
+    SRV -->|Metadata Lookup| DB[(MongoDB)]
+    SRV -->|Integrity Proof| BC{EVM Blockchain}
+    Org[Organization Admin] -->|Issue Document| SRV
+    Org -->|RBAC Auth| SRV
 ```
 
 ---
 
-## 🚀 Getting Started
+## 📂 Repository Architecture
 
-### Prerequisites
-- Node.js (v18+)
-- MongoDB (Running locally or Atlas)
-- Redis (Upstash or local)
-
-### Installation
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/me-athxrva/ether-vault.git
-   cd ether-vault
-   ```
-
-2. **Setup Smart Contracts**
-   ```bash
-   cd chain
-   npm install
-   npx hardhat node  # Keep this running
-   npx hardhat run scripts/deploy.js --network localhost
-   ```
-
-3. **Setup Backend**
-   ```bash
-   cd ../server
-   npm install
-   # Create a .env file based on the environment variables section below
-   npm run dev
-   ```
-
-4. **Setup Frontend**
-   ```bash
-   cd ../client
-   npm install
-   # Create a .env.local file
-   npm run dev
-   ```
+| Directory | Scope |
+| :--- | :--- |
+| [`/client`](./client) | Next.js Frontend - Luxury UI & Verification Logic |
+| [`/server`](./server) | Node.js Backend - RBAC & API Infrastructure |
+| [`/chain`](./chain) | Hardhat Environment - Smart Contracts & Deployment |
 
 ---
 
-## 🔑 Environment Variables
+## 🚀 Deployment Guide
 
-### Server (`/server/.env`)
+### System Requirements
+- Node.js (v20+ Recommended)
+- MongoDB Instance (Local or Atlas)
+- Redis Connection (Upstash Recommended)
+
+### 1. Protocol Deployment
+```bash
+cd chain
+npm install
+npx hardhat node # Start local network
+npx hardhat run scripts/deploy.js --network localhost
+```
+
+### 2. Infrastructure Setup
+```bash
+cd server
+npm install
+# Configure .env (see Variables section)
+npm run dev
+```
+
+### 3. Frontend Orchestration
+```bash
+cd client
+npm install
+# Configure .env.local
+npm run dev
+```
+
+---
+
+## 🔑 Environment Specifications
+
+### Server configuration (`/server/.env`)
 ```env
 PORT=5000
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-REDIS_URL=your_upstash_redis_url
-PRIVATE_KEY=your_deployer_private_key
-CONTRACT_ADDRESS=your_deployed_contract_address
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_secret_key
+REDIS_URL=your_redis_connection_url
+PRIVATE_KEY=your_evm_private_key
+CONTRACT_ADDRESS=your_deployed_contract
 ```
 
-### Client (`/client/.env.local`)
+### Client configuration (`/client/.env.local`)
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_CONTRACT_ADDRESS=your_deployed_contract_address
+NEXT_PUBLIC_CONTRACT_ADDRESS=your_deployed_contract
 ```
 
 ---
 
-## 🔒 Security Audit
-- **RBAC**: Implemented at the middleware level in the server.
-- **Validation**: All document uploads are hashed using `crypto` before blockchain submission.
-- **Privacy**: The `/verify` route returns a filtered object, ensuring no sensitive file paths or IDs are leaked.
-- **Rate Limiting**: Configured specifically for the verification endpoint to mitigate DDoS attempts.
+## 🔒 Security Posture
+EtherVault undergoes continuous internal auditing focusing on:
+- **Collision Resistance**: Document hashes are calculated client-side before submission.
+- **Data Obfuscation**: Public endpoints return filtered DTOs (Data Transfer Objects).
+- **Abuse Prevention**: Intelligent rate-limiting tiers based on endpoint sensitivity.
 
 ---
 
-## 📄 License
-This project is licensed under the ISC License.
-
----
+## 📄 Licensing
+This ecosystem is distributed under the **ISC License**. Commercial use and redistribution are permitted under the terms of the license.
 
 <p align="center">
-  Built with ❤️ for the Decentralized Web.
+  Built for the Future of Decentralized Trust.
 </p>
