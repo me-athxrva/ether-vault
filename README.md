@@ -3,27 +3,23 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Version-1.0.0-blue?style=for-the-badge&logo=semver" alt="Version" />
   <img src="https://img.shields.io/badge/Security-Hardened-success?style=for-the-badge&logo=securityscorecard" alt="Security" />
-  <img src="https://img.shields.io/badge/Blockchain-Ethereum-3C3C3D?style=for-the-badge&logo=ethereum" alt="Blockchain" />
-  <img src="https://img.shields.io/badge/License-ISC-orange?style=for-the-badge" alt="License" />
 </p>
-
-
 
 ## Enterprise-Grade Document Sovereignty
 **EtherVault** is an immutable document verification ecosystem engineered for high-integrity organizations. By leveraging decentralized blockchain anchors and a multi-tenant architecture, EtherVault provides a cryptographic "Source of Truth" for digital credentials, legal certifications, and sensitive documentation.
 
-Designed with a **Stealth-Luxury** aesthetic, the platform bridges the gap between complex blockchain infrastructure and premium user experience.
+The platform bridges the gap between complex blockchain infrastructure and premium user experience.
 
 ---
 
 ## Core Capabilities
 
-*   **Cryptographic Anchoring**: Every document issuance is hashed and permanently anchored to the Ethereum EVM, ensuring zero-knowledge proof of integrity.
+*   **Cryptographic Anchoring**: Every document issuance is hashed and permanently anchored to the Blockchain, ensuring zero-knowledge proof of integrity.
 *   **Multi-Tenant Infrastructure**: Enterprise-ready architecture supporting isolated organizational silos within a unified verification gateway.
 *   **Military-Grade Security**: Role-Based Access Control (RBAC) enforced at the protocol level, protecting issuance workflows from unauthorized access.
 *   **Zero-Leak Verification**: A privacy-first verification engine that validates authenticity without exposing underlying metadata or storage locations.
 *   **Instant Proof Generation**: Dynamic QR-Code generation and deep-link integration for immediate, mobile-first verification.
-*   **Adaptive Rate Limiting**: Upstash-backed flood protection ensures high availability for public verification lookups.
+*   **Adaptive Rate Limiting**: Flood protection ensures high availability for public verification lookups.
 
 ---
 
@@ -31,20 +27,19 @@ Designed with a **Stealth-Luxury** aesthetic, the platform bridges the gap betwe
 
 ### Protocol Layer
 - **Smart Contracts**: Solidity / Hardhat
-- **Blockchain Interface**: Ethers.js v6 (Type-safe integration)
+- **Blockchain Interface**: Ethers.js v6 
 - **Hashing**: SHA-256 Cryptographic Standards
 
 ### Backend Infrastructure
 - **Runtime**: Node.js / Express.js (High-performance API)
 - **Data Persistence**: MongoDB (Mongoose ODM)
-- **Traffic Orchestration**: Upstash Redis (Serverless Caching)
 - **Auth Protocol**: JWT with BcryptJS Salting
 
 ### Experience Layer
 - **Framework**: Next.js 15+ (App Router, Server Components)
 - **Visual Design**: Tailwind CSS 4, Radix UI (Headless primitives)
-- **Motion Orchestration**: GSAP, Framer Motion, Lenis Smooth Scroll
-- **State Engine**: Zustand (Zero-boilerplate management)
+- **Motion Orchestration**: GSAP, Lenis Smooth Scroll
+- **State Engine**: Zustand
 
 ---
 
@@ -67,7 +62,7 @@ graph TD
 
 | Directory | Scope |
 | :--- | :--- |
-| [`/client`](./client) | Next.js Frontend - Luxury UI & Verification Logic |
+| [`/client`](./client) | Next.js Frontend |
 | [`/server`](./server) | Node.js Backend - RBAC & API Infrastructure |
 | [`/chain`](./chain) | Hardhat Environment - Smart Contracts & Deployment |
 
@@ -100,7 +95,7 @@ npm run dev
 ```bash
 cd client
 npm install
-# Configure .env.local
+# Configure .env
 npm run dev
 ```
 
@@ -110,18 +105,22 @@ npm run dev
 
 ### Server configuration (`/server/.env`)
 ```env
-PORT=5000
-MONGODB_URI=your_mongodb_connection_string
-JWT_SECRET=your_secure_secret_key
-REDIS_URL=your_redis_connection_url
-PRIVATE_KEY=your_evm_private_key
-CONTRACT_ADDRESS=your_deployed_contract
+FRONTEND_URL=your-next.js-app-url
+MONGO_URI=your-mongodb-uri
+UPSTASH_REDIS_REST_URL=your-upstash-url
+UPSTASH_REDIS_REST_TOKEN=your-upstash-token
+JWT_SECRET=your-jwt-secret # 256 bits recommended
+PINATA_API_KEY=your-pinata-api-key
+PINATA_SECRET_API_KEY=your-pinata-secret-api-key
+PINATA_JWT=your-pinata-jwt
+PINATA_GATEWAY_URL=your-pinata-gateway-url
+PRIVATE_KEY=your-private-key
+CONTRACT_ADDRESS=your-contract-address 
 ```
 
 ### Client configuration (`/client/.env.local`)
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_CONTRACT_ADDRESS=your_deployed_contract
+NEXT_PUBLIC_SERVER_URL=your-server-url
 ```
 
 ---
@@ -133,9 +132,6 @@ EtherVault undergoes continuous internal auditing focusing on:
 - **Abuse Prevention**: Intelligent rate-limiting tiers based on endpoint sensitivity.
 
 ---
-
-## Licensing
-This ecosystem is distributed under the **ISC License**. Commercial use and redistribution are permitted under the terms of the license.
 
 <p align="center">
   Built for the Future of Decentralized Trust.

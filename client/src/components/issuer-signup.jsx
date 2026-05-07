@@ -26,7 +26,7 @@ export function SignupForm({
   return (
     <div className={cn("relative w-full max-w-lg mx-auto min-h-[500px] flex items-center justify-center", className)}>
       {/* Background Content - Blurred and Inactive */}
-      <Card className="w-full py-0 relative rounded-none border-none bg-transparent shadow-none ring-0 blur-[8px] pointer-events-none select-none opacity-20 transition-all duration-500" {...props}>
+      <Card className="w-full py-0 relative rounded-none border-none bg-transparent shadow-none ring-0 blur-sm pointer-events-none select-none opacity-20 transition-all duration-500" {...props}>
         <CardHeader className="rounded-none px-0 pt-0">
           <div className="mb-4">
             <div className="flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
