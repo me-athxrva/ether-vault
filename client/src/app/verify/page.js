@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { FileUpload } from "@/components/file-upload";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckCircle2, ShieldCheck, Database, Link2, Calendar, User, FileText, LoaderCircle, AlertCircle, Hash, Search } from "lucide-react";
+import { CheckCircle2, ShieldCheck, Database, Link2, Calendar, User, FileText, LoaderCircle, AlertCircle, Hash, Search, XCircle as XCircleIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import axios from "axios";
 import { QRCodeSVG } from "qrcode.react";
@@ -225,14 +225,14 @@ export default function VerifyPage() {
                 "flex h-12 w-12 items-center justify-center rounded-full border transition-all duration-500",
                 !isVerified && !isInvalid && !isVerifying ? "border-dashed border-white/20 bg-white/5" : 
                 isVerifying ? "border-blue-500/50 bg-blue-500/10 animate-pulse" : 
-                isInvalid ? "border-red-500/50 bg-red-500/10" :
+                isInvalid || results.some(r => r.isRevoked) ? "border-red-500/50 bg-red-500/10" :
                 "border-green-500/50 bg-green-500/10"
               )}>
                 {!isVerified && !isInvalid && !isVerifying ? (
                   <ShieldCheck className="size-6 text-white/20" />
                 ) : isVerifying ? (
                   <LoaderCircle className="size-6 text-blue-500 animate-spin" />
-                ) : isInvalid ? (
+                ) : isInvalid || results.some(r => r.isRevoked) ? (
                   <AlertCircle className="size-6 text-red-500" />
                 ) : (
                   <CheckCircle2 className="size-6 text-green-500" />
@@ -243,19 +243,19 @@ export default function VerifyPage() {
                   "text-2xl font-semibold transition-colors duration-500",
                   !isVerified && !isInvalid && !isVerifying ? "text-white/40" : 
                   isVerifying ? "text-blue-400" : 
-                  isInvalid ? "text-red-400" :
+                  isInvalid || results.some(r => r.isRevoked) ? "text-red-400" :
                   "text-green-400"
                 )}>
                   {!isVerified && !isInvalid && !isVerifying ? "Ready to Verify" : 
                    isVerifying ? "Scanning Records..." : 
                    isInvalid ? "Record Not Found" :
-                   `Verification Successful`}
+                   results.some(r => r.isRevoked) ? "Document Revoked" : "Verification Successful"}
                 </h3>
                 <p className="text-muted-foreground/60 text-sm">
                   {!isVerified && !isInvalid && !isVerifying ? "Scan your certificate to see proof of issuance" : 
                    isVerifying ? "Verifying local hash against blockchain registry" : 
                    isInvalid ? "The provided fragment does not match any authenticated record" :
-                   `Found ${results.length} valid issuance record(s)`}
+                   results.some(r => r.isRevoked) ? "This document has been invalidated by the issuer" : `Found ${results.length} valid issuance record(s)`}
                 </p>
               </div>
             </div>
@@ -299,9 +299,23 @@ export default function VerifyPage() {
                       className="result-card bg-white/5 border border-white/5 hover:border-white/10 transition-all rounded-2xl p-6 text-left space-y-6"
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 px-2.5 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
-                          <ShieldCheck className="size-3 text-green-500" />
-                          <span className="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Verified Issuance</span>
+                        <div className={cn(
+                          "flex items-center gap-2 px-2.5 py-1 rounded-full border",
+                          res.isRevoked 
+                            ? "bg-red-500/10 border-red-500/20" 
+                            : "bg-green-500/10 border-green-500/20"
+                        )}>
+                          {res.isRevoked ? (
+                            <XCircleIcon className="size-3 text-red-500" />
+                          ) : (
+                            <ShieldCheck className="size-3 text-green-500" />
+                          )}
+                          <span className={cn(
+                            "text-[10px] font-bold uppercase tracking-tighter",
+                            res.isRevoked ? "text-red-500" : "text-green-500"
+                          )}>
+                            {res.isRevoked ? "Revoked / Invalid" : "Verified Issuance"}
+                          </span>
                         </div>
                         <span className="text-[10px] font-mono text-white/20">{res.verifyId}</span>
                       </div>

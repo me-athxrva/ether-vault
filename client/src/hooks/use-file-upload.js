@@ -75,31 +75,30 @@ export const useFileUpload = (options = {}) => {
   }, [])
 
   const clearFiles = useCallback(() => {
+    let filesToClear = [];
     setState((prev) => {
-      // Clean up object URLs
       for (const file of prev.files) {
         if (
           file.preview &&
           file.file instanceof File &&
           file.file.type.startsWith("image/")
         ) {
-          URL.revokeObjectURL(file.preview)
+          URL.revokeObjectURL(file.preview);
         }
       }
-
-      if (inputRef.current) {
-        inputRef.current.value = ""
-      }
-
-      const newState = {
+      filesToClear = prev.files;
+      return {
         ...prev,
         files: [],
         errors: [],
-      }
+      };
+    });
 
-      onFilesChange?.(newState.files)
-      return newState
-    })
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+
+    onFilesChange?.([]);
   }, [onFilesChange])
 
   const addFiles = useCallback((newFiles) => {
@@ -165,20 +164,19 @@ export const useFileUpload = (options = {}) => {
 
     // Only update state if we have valid files to add
     if (validFiles.length > 0) {
-      // Call the onFilesAdded callback with the newly added valid files
-      onFilesAdded?.(validFiles)
+      onFilesAdded?.(validFiles);
 
-      setState((prev) => {
-        const newFiles = !multiple
-          ? validFiles
-          : [...prev.files, ...validFiles]
-        onFilesChange?.(newFiles)
-        return {
-          ...prev,
-          files: newFiles,
-          errors,
-        }
-      })
+      const newFilesForCallback = !multiple
+        ? validFiles
+        : [...state.files, ...validFiles];
+
+      setState((prev) => ({
+        ...prev,
+        files: !multiple ? validFiles : [...prev.files, ...validFiles],
+        errors,
+      }));
+
+      onFilesChange?.(newFilesForCallback);
     } else if (errors.length > 0) {
       onError?.(errors)
       setState((prev) => ({
@@ -205,26 +203,27 @@ export const useFileUpload = (options = {}) => {
   ])
 
   const removeFile = useCallback((id) => {
+    let newFiles = [];
     setState((prev) => {
-      const fileToRemove = prev.files.find((file) => file.id === id)
+      const fileToRemove = prev.files.find((file) => file.id === id);
       if (
         fileToRemove &&
         fileToRemove.preview &&
         fileToRemove.file instanceof File &&
         fileToRemove.file.type.startsWith("image/")
       ) {
-        URL.revokeObjectURL(fileToRemove.preview)
+        URL.revokeObjectURL(fileToRemove.preview);
       }
 
-      const newFiles = prev.files.filter((file) => file.id !== id)
-      onFilesChange?.(newFiles)
-
+      newFiles = prev.files.filter((file) => file.id !== id);
       return {
         ...prev,
         files: newFiles,
         errors: [],
-      }
-    })
+      };
+    });
+    
+    onFilesChange?.(newFiles);
   }, [onFilesChange])
 
   const clearErrors = useCallback(() => {

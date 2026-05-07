@@ -14,7 +14,11 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-const allowedOrigins = [process.env.FRONTEND_URL];
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "https://ethervault.atharvadeore.dev",
+  "http://localhost:3000",
+].filter(Boolean);
 
 app.use(
   cors({

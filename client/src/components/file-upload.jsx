@@ -16,7 +16,7 @@ import { CircleAlertIcon, FileText, UploadIcon } from 'lucide-react'
 
 export function FileUpload({
   maxFiles = 1,
-  maxSize = 10 * 1024 * 1024, // 10MB
+  maxSize = 5 * 1024 * 1024, // 5MB
   accept = ".pdf",
   multiple = false,
   className,
@@ -158,7 +158,7 @@ export function FileUpload({
               <div className="pt-4 flex items-center justify-center gap-2">
                 <div className="px-3 py-1 bg-white/5 rounded-full border border-white/10">
                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-black">
-                     PDF • MAX 10MB
+                     PDF • MAX 5MB
                    </p>
                 </div>
               </div>

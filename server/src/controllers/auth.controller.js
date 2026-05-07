@@ -3,6 +3,7 @@ const Organisation = require("../models/organisation.model");
 const redis = require("../config/redis");
 const jwt = require("jsonwebtoken");
 const { logActivity } = require("../utils/activityLogger");
+const crypto = require("crypto");
 
 async function userRegisterController(req, res) {
   const { email, name, password, organisationId } = req.body || {};
@@ -213,7 +214,7 @@ async function userLoginController(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: "lax",
       path: "/",
       maxAge: 604800000,
@@ -294,7 +295,7 @@ async function adminLoginController(req, res) {
       otp = 123456;
     } else {
       do {
-        otp = Math.floor(100000 + Math.random() * 900000);
+        otp = crypto.randomInt(100000, 1000000);
       } while (otp === 123456);
     }
 
@@ -386,7 +387,7 @@ async function verifyOtpController(req, res) {
 
     res.cookie("token", jwt_token, {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: "lax",
       path: "/",
       maxAge: 604800000,
@@ -421,7 +422,7 @@ async function logoutController(req, res) {
   try {
     res.clearCookie("token", {
       httpOnly: true,
-      secure: false,
+      secure: true,
       sameSite: "lax",
       path: "/",
     });

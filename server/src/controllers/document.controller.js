@@ -164,7 +164,7 @@ async function revokeDocumentController(req, res) {
 
     logActivity({
       userId: issuerId,
-      type: "document_revocation",
+      type: "document_revoke",
       message: `Revoked document "${document.title}"`,
       metadata: {
         documentId: document._id,
