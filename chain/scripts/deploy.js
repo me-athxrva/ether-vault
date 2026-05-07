@@ -2,19 +2,11 @@ import { ethers } from "ethers";
 import hre from "hardhat";
 
 async function main() {
-  const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+  const [deployer] = await hre.ethers.getSigners();
 
-  const signer = await provider.getSigner();
+  console.log("Deploying contracts with the account:", deployer.address);
 
-  const artifact = await hre.artifacts.readArtifact("DocumentVerification");
-
-  const factory = new ethers.ContractFactory(
-    artifact.abi,
-    artifact.bytecode,
-    signer,
-  );
-
-  const contract = await factory.deploy();
+  const contract = await hre.ethers.deployContract("DocumentVerification");
 
   await contract.waitForDeployment();
 

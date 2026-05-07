@@ -1,6 +1,6 @@
 const { ethers } = require("ethers");
 
-const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL || "http://127.0.0.1:8545");
 
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
