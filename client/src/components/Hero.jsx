@@ -1,15 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import Link from "next/link";
 import { Pill } from "./kibo-ui/pill";
-import { ChevronRight } from "lucide-react";
-
+import { ChevronRight, Loader2 } from "lucide-react";
+import { sileo } from "sileo";
+import { cn } from "@/lib/utils";
 
 export default function Hero() {
   const pathname = usePathname();
+  const [isBackendReady, setIsBackendReady] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
 
   const refs = {
     pill: useRef(null),
@@ -20,8 +23,42 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
+    const checkBackend = async () => {
+      let toastId;
+      try {
+        // Show loading toast after a short delay if backend hasn't responded
+        const timeoutId = setTimeout(() => {
+          toastId = sileo.info({
+            title: "Waking up server",
+            description: "Backend is spinning up on Render. This may take a few seconds.",
+            duration: 10000,
+          });
+        }, 1500);
 
+        const res = await fetch("/api/auth/session");
+        clearTimeout(timeoutId);
+        
+        if (res.ok || res.status === 401) {
+          setIsBackendReady(true);
+          if (toastId) {
+            sileo.success({
+              title: "System Ready",
+              description: "Backend connection established.",
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Backend check failed:", err);
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkBackend();
+  }, []);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
       const targets = [refs.heading.current, refs.pill.current, refs.desc.current, refs.buttons.current].filter(Boolean);
       if (targets.length) {
         gsap.set(targets, { autoAlpha: 0 });
@@ -132,14 +169,28 @@ export default function Hero() {
       </p>
 
       <div ref={refs.buttons} className="mt-10 flex flex-wrap items-center justify-center gap-4 will-change-[opacity,filter]">
-        <Link href="/recipient/login" className="group relative cursor-pointer rounded-full bg-white px-7 py-3 h-12 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a1c1c] transform-gpu will-change-transform transition-transform duration-300 hover:scale-[1.03]">
+        <Link 
+          href={isBackendReady ? "/recipient/login" : "#"} 
+          className={cn(
+            "group relative rounded-full bg-white px-7 py-3 h-12 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#1a1c1c] transform-gpu will-change-transform transition-all duration-300",
+            isBackendReady ? "cursor-pointer hover:scale-[1.03]" : "cursor-not-allowed opacity-50 grayscale"
+          )}
+        >
+          {!isBackendReady && <Loader2 className="w-4 h-4 animate-spin" />}
           <span className="relative z-10">For Recipients</span>
-          <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-          <span className="pointer-events-none absolute -bottom-2 left-4 right-4 h-2.5 bg-[linear-gradient(90deg,#ff0000,#ff8a00,#ffe600,#4cff00,#00d0ff,#7b00ff,#ff00c8)] opacity-60 blur-lg transition-opacity duration-300 group-hover:opacity-80 hover:blur-3xl rounded-full" />
+          {isBackendReady && <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />}
+          {isBackendReady && <span className="pointer-events-none absolute -bottom-2 left-4 right-4 h-2.5 bg-[linear-gradient(90deg,#ff0000,#ff8a00,#ffe600,#4cff00,#00d0ff,#7b00ff,#ff00c8)] opacity-60 blur-lg transition-opacity duration-300 group-hover:opacity-80 hover:blur-3xl rounded-full" />}
         </Link>
-        <Link href="/issuer/login" className="group relative cursor-pointer rounded-full px-7 py-3 h-12 flex items-center gap-2 text-xs font-bold border border-white/17 uppercase tracking-widest text-[#d4d4d4] transform-gpu will-change-transform transition-transform duration-300 hover:scale-[1.03]">
+        <Link 
+          href={isBackendReady ? "/issuer/login" : "#"} 
+          className={cn(
+            "group relative rounded-full px-7 py-3 h-12 flex items-center gap-2 text-xs font-bold border border-white/17 uppercase tracking-widest text-[#d4d4d4] transform-gpu will-change-transform transition-all duration-300",
+            isBackendReady ? "cursor-pointer hover:scale-[1.03]" : "cursor-not-allowed opacity-50"
+          )}
+        >
+          {!isBackendReady && <Loader2 className="w-4 h-4 animate-spin" />}
           <span className="relative z-10">For Issuers</span>
-          <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+          {isBackendReady && <ChevronRight className="relative z-10 w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5" />}
         </Link>
       </div>
     </section>
