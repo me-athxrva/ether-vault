@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import Link from "next/link";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Button } from "@/components/ui/button";
 import { Shield, Zap, Building2, GitBranch, ArrowRight } from "lucide-react";
@@ -108,9 +109,9 @@ export default function Features() {
             from any browser using a public key or direct API.
           </p>
           <div className="mt-8 flex items-center gap-2">
-            <span className="rounded-full bg-[#1a1c1c] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-[#d4d4d4]">
-              REST
-            </span>
+            <Link href="/docs" className="rounded-full bg-[#1a1c1c] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-[#d4d4d4]">
+              API Documentation
+            </Link>
             <ArrowRight className="h-4 w-4 text-[#474747]" />
           </div>
         </div>
@@ -144,7 +145,7 @@ export default function Features() {
               variant="ghost"
               className="rounded-full bg-surface-high px-5 py-2 text-xs font-bold uppercase tracking-widest text-[#d4d4d4] hover:bg-surface-highest"
             >
-              Explore API
+              Coming Soon
             </Button>
           </div>
         </div>
