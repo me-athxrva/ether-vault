@@ -152,12 +152,12 @@ export function DocumentsTable({
           <div className="col-span-1 flex items-center">
             {doc.txHash && (
               <a
-                href={`https://etherscan.io/tx/${doc.txHash}`}
+                href={`https://amoy.polygonscan.com/tx/${doc.txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 className="p-1.5 rounded-md hover:bg-white/6 transition-colors opacity-0 group-hover:opacity-100"
-                title="View on Etherscan"
+                title="View on Polygonscan"
               >
                 <ExternalLinkIcon className="size-3.5 text-muted-foreground/40" />
               </a>

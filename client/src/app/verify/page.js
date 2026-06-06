@@ -332,7 +332,7 @@ export default function VerifyPage() {
                             label="Blockchain Hash" 
                             value={
                               <a 
-                                href={`https://sepolia.etherscan.io/tx/${res.txHash}`} 
+                                href={`https://amoy.polygonscan.com/tx/${res.txHash}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="text-[10px] font-mono text-blue-400 hover:text-blue-300 transition-colors bg-blue-500/5 px-2 py-0.5 rounded border border-blue-500/10"
