@@ -121,19 +121,17 @@ export default function Footer() {
               <div>
                 <h4 className="font-(family-name:--font-display) text-sm font-bold tracking-widest text-[#d4d4d4] uppercase mb-6">Source</h4>
                 <div className="flex flex-col gap-4">
-                  <Link href="#" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Repository</Link>
-                  <Link href="#" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Smart Contracts</Link>
-                  <Link href="#" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Local Setup</Link>
-                  <Link href="#" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">ReadMe Docs</Link>
+                  <Link href="https://github.com/me-athxrva/ether-vault" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Repository</Link>
+                  <Link href="https://github.com/me-athxrva/ether-vault/blob/main/README.md" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Docs</Link>
                 </div>
               </div>
               <div>
                 <h4 className="font-(family-name:--font-display) text-sm font-bold tracking-widest text-[#d4d4d4] uppercase mb-6">Creator</h4>
                 <div className="flex flex-col gap-4">
-                  <Link href="https://atharvadeore.vercel.app" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Dev</Link>
+                  <Link href="https://atharvadeore.dev" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Dev</Link>
                   <Link href="https://github.com/atharvadeore" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">GitHub</Link>
                   <Link href="https://www.linkedin.com/in/atharvadeore/" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">LinkedIn</Link>
-                  <Link href="mailto:[abc123@gmail.com]" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Contact</Link>
+                  <Link href="mailto:[atharvadeore1973@gmail.com]" className="text-sm font-medium tracking-wide text-[#8a8a8a] transition-colors hover:text-white">Contact</Link>
                 </div>
               </div>
             </div>
