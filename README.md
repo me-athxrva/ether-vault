@@ -49,9 +49,9 @@ The platform bridges the gap between complex blockchain infrastructure and premi
 graph TD
     User((Verification Client)) -->|QR Scan/Search| VUI[Verification Gateway]
     VUI -->|API Request| SRV[Secure API Layer]
-    SRV -->|Rate Limit Check| RDS[(Upstash Redis)]
+    SRV -->|Rate Limit Check| RDS[(Redis)]
     SRV -->|Metadata Lookup| DB[(MongoDB)]
-    SRV -->|Integrity Proof| BC{EVM Blockchain}
+    SRV -->|Integrity Proof| BC{Blockchain}
     Org[Organization Admin] -->|Issue Document| SRV
     Org -->|RBAC Auth| SRV
 ```
